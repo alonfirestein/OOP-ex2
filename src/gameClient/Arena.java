@@ -1,13 +1,8 @@
 package gameClient;
 
-import api.directed_weighted_graph;
-import api.edge_data;
-import api.geo_location;
-import api.node_data;
-import gameClient.util.Point3D;
-import gameClient.util.Range;
-import gameClient.util.Range2D;
-import gameClient.util.Range2Range;
+import api.*;
+
+import gameClient.util.*;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -49,7 +44,7 @@ public class Arena {
 	private void init( ) {
 		MIN=null; MAX=null;
 		double x0=0,x1=0,y0=0,y1=0;
-		for (api.node_data node_data : graph.getV()) {
+		for (node_data node_data : graph.getV()) {
 			geo_location c = node_data.getLocation();
 			if (MIN == null) {
 				x0 = c.x();

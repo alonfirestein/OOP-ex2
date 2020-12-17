@@ -1,10 +1,7 @@
 package gameClient;
 
-import api.directed_weighted_graph;
-import api.edge_data;
-import api.geo_location;
-import api.node_data;
-import gameClient.util.Point3D;
+import api.*;
+import gameClient.util.*;
 import org.json.JSONObject;
 
 import java.util.Objects;
