@@ -25,7 +25,7 @@ public class Ex2 implements Runnable {
 	public static game_service game;
 	private static directed_weighted_graph graph;
 	private static dw_graph_algorithms graph_algo = new DWGraph_Algo();
-	private List<CL_Agent> AgentsInGame = new ArrayList<>();
+	private List<Agent> AgentsInGame = new ArrayList<>();
 	private HashMap<Integer, edge_data> EdgeSrcList = new HashMap<>();
 	private HashMap<Integer, HashMap<Integer, List<node_data>>> EveryPathList = new HashMap<>();
 	private HashMap<Integer, HashMap<Integer, Double>> EveryPathDistList = new HashMap<>();
@@ -40,7 +40,9 @@ public class Ex2 implements Runnable {
 		argsFlag = false;
 		if (args.length != 0) {
 			id = Long.parseLong(args[0]);
-			level_number = Integer.parseInt(args[1]);
+			if (Integer.parseInt(args[1]) < 0 || Integer.parseInt(args[1]) > 23)
+				throw new IllegalArgumentException("Levels are only in the range of [0,23], please try again.");
+			else level_number = Integer.parseInt(args[1]);
 			argsFlag = true;
 		}
 		Thread client = new Thread(new Ex2());
@@ -50,6 +52,7 @@ public class Ex2 implements Runnable {
 	@Override
 	public void run() {
 
+		int level_number = 0;
 		if (!argsFlag) {
 			ImageIcon EntryIcon = new ImageIcon(new ImageIcon("images/pokeball.png").getImage().getScaledInstance(120, 120, Image.SCALE_DEFAULT));
 			String LogInMessage = "Welcome To The Pokemon Challenge!\n\nTo Save Your Progress Please Enter Your ID Number:\nOtherwise Enter 0.";
@@ -57,7 +60,7 @@ public class Ex2 implements Runnable {
 			int id = Integer.parseInt((String) JOptionPane.showInputDialog(null, LogInMessage, "ID", JOptionPane.QUESTION_MESSAGE, EntryIcon, null, 0));
 			int[] range = IntStream.iterate(0, n -> n <= 23, n -> n + 1).toArray();
 			String[] Levels = Arrays.toString(range).split("[\\[\\]]")[1].split(", ");
-			int level_number = Integer.parseInt((String) JOptionPane.showInputDialog(null, LevelMessage, "Level", JOptionPane.INFORMATION_MESSAGE, EntryIcon, Levels, 0));
+			level_number = Integer.parseInt((String) JOptionPane.showInputDialog(null, LevelMessage, "Level", JOptionPane.INFORMATION_MESSAGE, EntryIcon, Levels, 0));
 			game = Game_Server_Ex2.getServer(level_number); // you have [0,23] games
 			game.login(id);
 		}
@@ -70,12 +73,14 @@ public class Ex2 implements Runnable {
 		game.startGame();
 		window.setTitle("Ex2: Pokemon Challenge");
 		int ind = 0;
-		long dt = dtTime(level_number);
+		long dt = this.dtTime(level_number);
 		double time = game.timeToEnd()/1000;
 		while (game.isRunning()) {
 			moveAgents(game, graph);
+
 			try {
 				if (ind % 1 == 0) { window.repaint(); }
+				if (dtTime(level_number)==80 && time<25) dt = 100;
 				Thread.sleep(dt);
 				ind++;
 			} catch (Exception e) {
@@ -130,9 +135,9 @@ public class Ex2 implements Runnable {
 			int num_of_agents = server.getInt("agents");
 			System.out.println(info);
 			System.out.println(game.getPokemons());
-			ArrayList<CL_Pokemon> pokemonsList = Arena.json2Pokemons(game.getPokemons());
+			ArrayList<Pokemon> pokemonsList = Arena.json2Pokemons(game.getPokemons());
 			int i = 0;
-			for (CL_Pokemon pokemon : pokemonsList) {
+			for (Pokemon pokemon : pokemonsList) {
 				Arena.updateEdge(pokemon, graph);
 				if (i < num_of_agents) {
 					game.addAgent(pokemon.get_edge().getSrc());
@@ -142,7 +147,7 @@ public class Ex2 implements Runnable {
 			}
 			for (node_data node : graph_algo.getGraph().getV()) {
 				if (i < num_of_agents) {
-					CL_Agent agent = new CL_Agent(graph_algo.getGraph(), node.getKey());
+					Agent agent = new Agent(graph_algo.getGraph(), node.getKey());
 					AgentsInGame.add(agent);
 					game.addAgent(node.getKey());
 					i++;
@@ -162,15 +167,15 @@ public class Ex2 implements Runnable {
 	public void moveAgents(game_service game, directed_weighted_graph graph) {
 
 		String move = game.move();
-		List<CL_Agent> AgentsList = Arena.getAgents(move, graph);
+		List<Agent> AgentsList = Arena.getAgents(move, graph);
 		arena.setAgents(AgentsList);
 		String pokemonAsString = game.getPokemons();
-		List<CL_Pokemon> pokemonsList = Arena.json2Pokemons(pokemonAsString);
+		List<Pokemon> pokemonsList = Arena.json2Pokemons(pokemonAsString);
 		arena.setPokemons(pokemonsList);
-		for (CL_Pokemon p : pokemonsList) {
+		for (Pokemon p : pokemonsList) {
 			arena.updateEdge(p, graph);
 		}
-		for (CL_Agent agent : AgentsList) {
+		for (Agent agent : AgentsList) {
 			int dest;
 			if (agent.get_curr_edge() == null) {
 				if (EdgeSrcList.get(agent.getID()).getSrc() == agent.getSrcNode()) {
@@ -191,10 +196,10 @@ public class Ex2 implements Runnable {
 	}
 
 
-	private int nextNode(CL_Agent agent) {
+	private int nextNode(Agent agent) {
 
 		double distance = Double.MAX_VALUE;
-		for (CL_Pokemon pokemon : arena.getPokemons()) {
+		for (Pokemon pokemon : arena.getPokemons()) {
 			edge_data pokeEdge = pokemon.get_edge();
 			double TempDistance = EveryPathDistList.get(agent.getSrcNode()).get(pokemon.get_edge().getSrc());
 			if (TempDistance < distance && TempDistance != -1) {
@@ -267,11 +272,12 @@ public class Ex2 implements Runnable {
 
 	public int dtTime(int level_number) {
 		int[] levels = {0,6,8,10,13,16,17,18,19};
-		for (int level : levels) {
+		for (var level : levels) {
 			if (level == level_number)  {
 				return 120;
 			}
 		}
+		if (level_number == 21) return 85;
 		return 100;
 	}
 

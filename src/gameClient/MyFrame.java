@@ -80,7 +80,7 @@ public class MyFrame extends JFrame {
 	}
 
 	private void drawPokemons(Graphics g) {
-		List<CL_Pokemon> pokemonList = arena.getPokemons();
+		List<Pokemon> pokemonList = arena.getPokemons();
 		Image pokemon1 = new ImageIcon("images/pikachu2.png").getImage();
 		Image pokemon2 = new ImageIcon("images/pokemon1.png").getImage();
 		Image pokemon3 = new ImageIcon("images/pokemon2.png").getImage();
@@ -89,7 +89,7 @@ public class MyFrame extends JFrame {
 		Image pokemon6 = new ImageIcon("images/pokemon7.png").getImage();
 
 		if(pokemonList != null) {
-			for (CL_Pokemon pokemon : pokemonList) {
+			for (Pokemon pokemon : pokemonList) {
 				Point3D location = pokemon.getLocation();
 				int r = 10;
 				if (location != null) {
@@ -110,7 +110,7 @@ public class MyFrame extends JFrame {
 	private void drawAgents(Graphics g) {
 		int r = 8;
 		Image image = new ImageIcon("images/ash.png").getImage();
-		for (CL_Agent agent : arena.getAgents()) {
+		for (Agent agent : arena.getAgents()) {
                 geo_location location = agent.getLocation();
                 geo_location fp = UpdateGraphInfoAfterResize(_w2f.world2frame(location),g);
 				g.drawImage(image,(int)fp.x()-r, (int)fp.y()-r, 3*r, 5*r, null);
@@ -171,7 +171,7 @@ public class MyFrame extends JFrame {
 		String gameInfo = "Level: "+ level +"     Time Remaining: "+ time+"     Score: "+score+"     Moves: "+moves;
 		g.drawString(gameInfo, (getWidth()/2)-190,getHeight()/20);
 		int i = 0;
-		for (CL_Agent agent : arena.getAgents()) {
+		for (Agent agent : arena.getAgents()) {
 			g.drawString("Agent: " +agent.getID()+"   Score: "+agent.getValue(), (getWidth()/20)-50,(getHeight()/20)+i);
 			i+=20;
 		}
