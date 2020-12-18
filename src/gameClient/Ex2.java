@@ -52,7 +52,6 @@ public class Ex2 implements Runnable {
 	@Override
 	public void run() {
 
-		int level_number = 0;
 		if (!argsFlag) {
 			ImageIcon EntryIcon = new ImageIcon(new ImageIcon("images/pokeball.png").getImage().getScaledInstance(120, 120, Image.SCALE_DEFAULT));
 			String LogInMessage = "Welcome To The Pokemon Challenge!\n\nTo Save Your Progress Please Enter Your ID Number:\nOtherwise Enter 0.";
@@ -81,6 +80,8 @@ public class Ex2 implements Runnable {
 			try {
 				if (ind % 1 == 0) { window.repaint(); }
 				if (dtTime(level_number)==80 && time<25) dt = 100;
+				System.out.println("DT IS: "+dt);
+				System.out.println("LEVEL: "+level_number);
 				Thread.sleep(dt);
 				ind++;
 			} catch (Exception e) {
