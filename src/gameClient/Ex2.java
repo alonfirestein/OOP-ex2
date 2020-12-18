@@ -80,8 +80,6 @@ public class Ex2 implements Runnable {
 			try {
 				if (ind % 1 == 0) { window.repaint(); }
 				if (dtTime(level_number)==80 && time<25) dt = 100;
-				System.out.println("DT IS: "+dt);
-				System.out.println("LEVEL: "+level_number);
 				Thread.sleep(dt);
 				ind++;
 			} catch (Exception e) {
