@@ -13,6 +13,8 @@ import java.util.*;
  *
  * @author Alon Firestein
  */
+ // TEST TEST TEST!
+ 
 public class DWGraph_Algo implements dw_graph_algorithms {
     private directed_weighted_graph graph_algo;
     private HashMap<node_data, Double> DistanceList = new HashMap<>();
